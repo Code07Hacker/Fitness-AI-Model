@@ -29,4 +29,8 @@ public class UserService {
 
         return userMapper.mapToUserRespone(user);
     }
+
+    public boolean existByUserId(String userId) {
+        return userRepository.existsById(userId);
+    }
 }

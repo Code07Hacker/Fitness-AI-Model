@@ -17,7 +17,13 @@ public class ActivityService {
 
     private final ActivityMapper activityMapper;
 
+    private final UserValidationService userValidationService;
+
     public ActivityResponse trackActivity(ActivityRequest activityRequest) {
+        boolean isValidUser = userValidationService.validateUser(activityRequest.getUserId());
+        if(!isValidUser){
+            throw new RuntimeException("Invalid User : " + activityRequest.getUserId());
+        }
         Activity activity = activityRepository.save(activityMapper.mapToActivity(activityRequest));
         return activityMapper.mapToActivityResponse(activity);
     }
