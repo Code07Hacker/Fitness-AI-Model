@@ -1,0 +1,24 @@
+package com.fitness.aiservice.Listener;
+
+import com.fitness.aiservice.model.Activity;
+import com.fitness.aiservice.service.ActivityAIService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ActivityMessageListener {
+
+    private final ActivityAIService activityAIService;
+
+    @KafkaListener(topics = "${app.kafka.topic.name}",groupId = "my-consumer-group")
+    public void processActivity(Activity activity){
+        log.info("Received Activity for processing : {}",activity.getUserId());
+        activityAIService.generateRecommendation(activity);
+    }
+
+}
