@@ -6,9 +6,11 @@ import com.fitness.userservice.mapper.UserMapper;
 import com.fitness.userservice.models.User;
 import com.fitness.userservice.repo.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class UserService {
 
@@ -18,9 +20,12 @@ public class UserService {
 
     public UserResponse register(RegisterRequest registerRequest) {
         if(userRepository.existsByEmail(registerRequest.getEmail())){
-            throw new RuntimeException("Email Already Exist");
+            User existingUser = userRepository.findByEmail(registerRequest.getEmail());
+            return userMapper.mapToUserRespone(existingUser);
         }
+        log.info("Register request : {}",registerRequest);
         User user = userRepository.save(userMapper.mapToUser(registerRequest));
+        log.info("User Saved : {}",user);
         return userMapper.mapToUserRespone(user);
     }
 
@@ -31,6 +36,6 @@ public class UserService {
     }
 
     public boolean existByUserId(String userId) {
-        return userRepository.existsById(userId);
+        return userRepository.existsByKeyCloakId(userId);
     }
 }
